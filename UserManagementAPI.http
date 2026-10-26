@@ -1,0 +1,102 @@
+@host = http://localhost:5000
+@token = techhive-secret-token-123
+
+### 1. GET all users
+GET {{host}}/api/users
+Authorization: Bearer {{token}}
+
+### 2. GET users with paging + filter
+GET {{host}}/api/users?page=1&pageSize=2&department=IT
+Authorization: Bearer {{token}}
+
+### 3. GET user by id
+GET {{host}}/api/users/1
+Authorization: Bearer {{token}}
+
+### 4. GET non-existent user (expect 404)
+GET {{host}}/api/users/999
+Authorization: Bearer {{token}}
+
+### 5. POST valid user (expect 201)
+POST {{host}}/api/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Mei",
+  "lastName": "Tan",
+  "email": "mei.tan@techhive.com",
+  "department": "HR",
+  "role": "Recruiter"
+}
+
+### 6. POST invalid email + empty name (expect 400)
+POST {{host}}/api/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "",
+  "lastName": "Tan",
+  "email": "not-an-email",
+  "department": "HR",
+  "role": "Recruiter"
+}
+
+### 7. POST duplicate email (expect 409)
+POST {{host}}/api/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Dup",
+  "lastName": "User",
+  "email": "daniel.lee@techhive.com",
+  "department": "IT",
+  "role": "Tester"
+}
+
+### 8. PUT update user (expect 200)
+PUT {{host}}/api/users/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Daniel",
+  "lastName": "Lee",
+  "email": "daniel.lee@techhive.com",
+  "department": "IT",
+  "role": "IT Manager"
+}
+
+### 9. PUT non-existent user (expect 404)
+PUT {{host}}/api/users/999
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "No",
+  "lastName": "One",
+  "email": "no.one@techhive.com",
+  "department": "IT",
+  "role": "Ghost"
+}
+
+### 10. DELETE user (expect 204)
+DELETE {{host}}/api/users/3
+Authorization: Bearer {{token}}
+
+### 11. DELETE again (expect 404)
+DELETE {{host}}/api/users/3
+Authorization: Bearer {{token}}
+
+### 12. No token (expect 401)
+GET {{host}}/api/users
+
+### 13. Wrong token (expect 401)
+GET {{host}}/api/users
+Authorization: Bearer wrong-token
+
+### 14. Trigger exception (expect 500 + {"error":"Internal server error."})
+GET {{host}}/debug/throw
+Authorization: Bearer {{token}}
